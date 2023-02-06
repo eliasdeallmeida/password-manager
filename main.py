@@ -1,143 +1,6 @@
-from random import choice
-from os import name, system
-from time import sleep
-from random import choice
-from os import name, system
-from time import sleep
-
-def clear_console():
-  system('cls' if name == 'nt' else 'clear')
-
-def input_int(message = 'Enter a integer number: '):
-  while True:
-    try:
-      number = int(input(message))
-    except:
-      print('>>> ERROR: Enter a valid integer number.')
-    else:
-      return number
-
-def get_password_length():
-  while True:
-    length = input_int('Enter the password length: ')
-    if 8 <= length <= 16:
-      clear_console()
-      return length
-    print('>>> ERROR: The password length should be between 8 and 16.\n')
-
-def get_password_option():
-  selected_option = ''
-  while True:
-    clear_console()
-    show_menu(selected_option)
-    option = input_int('\nYour choice: ')
-    if 1 <= option <= 4:
-      selected_option += str(option)
-    elif option == 5:
-      selected_option = '12345'
-    elif option == 6:
-      selected_option = ''
-    elif option == 7:
-      return False
-    elif option == 8:
-      if selected_option == '':
-        print('>>> ERROR: You didn\'t selected any password option')
-        input('Press ENTER to continue...')
-        continue
-      break
-    else:
-      print('>>> ERROR: Enter a valid option', end = '')
-      for c in range(3):
-        print('.', end = '', flush = True)
-        sleep(1)
-  return selected_option.replace('5', '')
-
-def show_menu(selected_options):
-  menu = (
-    'Lowercase characters',
-    'Uppercase characters',
-    'Special characters',
-    'Numbers',
-    'All characters',
-    'Clear',
-    'Previous',
-    'Next'
-  )
-  print(f'{" GENERATE PASSWORD ":=^35}')
-  for count, option in enumerate(menu):
-    if str(count + 1) in selected_options:
-      print('[X] ', end = '')
-    elif count < 5:
-      print('[ ] ', end = '')
-    else:
-      print('    ', end = '')
-    print(f'{count + 1}{option:.>30}')
-
-def set_valid_characters(all_characters, option):
-  characters = ''
-  for op in option:
-    characters += all_characters[int(op) - 1]
-  return characters
-
-def generate_password(characters, length):
-  return ''.join(choice(characters) for c in range(length))
-
-def confirm(message = '\nDo you want to continue? [Y/N] '):
-  while True:
-    answer = str(input(message)).strip().upper()[0]
-    if answer == 'Y':
-      return True
-    elif answer == 'N':
-      return False
-    print('>>> ERROR: Enter Y for Yes or N for No.')
-
-def show_database_menu():
-  menu = (
-    'Show passwords',
-    'Generate password',
-    'Update password',
-    'Delete password',
-    'Exit'
-  )
-  print(f'{" DATABASE MENU ":=^35}')
-  for count, option in enumerate(menu):
-    print(f'{count + 1:.<5}{option:.>30}')
-
-def read_database(key = False):
-  with open('passwords.txt', 'r') as file:
-    database = file.readlines()
-  print(f'{" PASSWORDS ":=^35}')
-  for id, line in enumerate(database):
-    line = line.replace('\n', '')
-    print(f'{id + 1:.<5}{" " + line:.>30}')
-  print()
-  if key is True:
-    return database
-  input('Press ENTER to continue...')
-
-def generate(all_characters, option, id = False, key = False):
-    clear_console()
-    password_length = get_password_length()
-    characters = set_valid_characters(all_characters, option)
-    password = generate_password(characters, password_length)
-    print(f'Password generated: {password}')
-    save = confirm('Do you want to save the password? [Y/N] ')
-    if save is True:
-      if key is True:
-        with open('passwords.txt', 'r') as file:
-          database = file.readlines()
-          database[id] = password + '\n'
-        with open('passwords.txt', 'w') as file:
-          for line in database:
-            file.write(line)
-      else:
-        with open('passwords.txt', 'a') as file:
-          file.write(password + '\n')
-        print('\nPassword was saved successfully.')
-    else:
-      print('\nPassword was not saved.')
-    input('Press ENTER to continue...')
-
+from features import *
+from input import *
+from output import *
 
 all_characters = (
   'abcdefghijklmnopqrstuvwxyz',
@@ -148,12 +11,12 @@ all_characters = (
 
 while True:
   clear_console()
-  show_database_menu()
+  show_menu()
   option = input_int('\nYour choice: ')
 
   if option == 1:
     clear_console()
-    read_database()
+    show_database()
 
   elif option == 2:
     option = get_password_option()
@@ -163,7 +26,7 @@ while True:
     
   elif option == 3:
     clear_console()
-    database = read_database(True)
+    database = show_database(True)
     id = input_int('Enter the password ID (0 to go back): ')
     if id == 0:
       continue
@@ -175,7 +38,7 @@ while True:
   
   elif option == 4:
     clear_console()
-    database = read_database(True)
+    database = show_database(True)
     delete = input_int('Enter the password ID (0 to go back): ')
     if delete == 0:
       continue
@@ -197,194 +60,3 @@ while True:
 
 print('Program was finished.')
 
-def clear_console():
-  system('cls' if name == 'nt' else 'clear')
-
-def input_int(message = 'Enter a integer number: '):
-  while True:
-    try:
-      number = int(input(message))
-    except:
-      print('>>> ERROR: Enter a valid integer number.')
-    else:
-      return number
-
-def get_password_length():
-  while True:
-    length = input_int('Enter the password length: ')
-    if 8 <= length <= 16:
-      clear_console()
-      return length
-    print('>>> ERROR: The password length should be between 8 and 16.\n')
-
-def get_password_option():
-  selected_option = ''
-  while True:
-    clear_console()
-    show_menu(selected_option)
-    option = input_int('\nYour choice: ')
-    if 1 <= option <= 4:
-      selected_option += str(option)
-    elif option == 5:
-      selected_option = '12345'
-    elif option == 6:
-      selected_option = ''
-    elif option == 7:
-      return False
-    elif option == 8:
-      if selected_option == '':
-        print('>>> ERROR: You didn\'t selected any password option')
-        input('Press ENTER to continue...')
-        continue
-      break
-    else:
-      print('>>> ERROR: Enter a valid option', end = '')
-      for c in range(3):
-        print('.', end = '', flush = True)
-        sleep(1)
-  return selected_option.replace('5', '')
-
-def show_menu(selected_options):
-  menu = (
-    'Lowercase characters',
-    'Uppercase characters',
-    'Special characters',
-    'Numbers',
-    'All characters',
-    'Clear',
-    'Previous',
-    'Next'
-  )
-  print(f'{" GENERATE PASSWORD ":=^35}')
-  for count, option in enumerate(menu):
-    if str(count + 1) in selected_options:
-      print('[X] ', end = '')
-    elif count < 5:
-      print('[ ] ', end = '')
-    else:
-      print('    ', end = '')
-    print(f'{count + 1}{option:.>30}')
-
-def set_valid_characters(all_characters, option):
-  characters = ''
-  for op in option:
-    characters += all_characters[int(op) - 1]
-  return characters
-
-def generate_password(characters, length):
-  return ''.join(choice(characters) for c in range(length))
-
-def confirm(message = '\nDo you want to continue? [Y/N] '):
-  while True:
-    answer = str(input(message)).strip().upper()[0]
-    if answer == 'Y':
-      return True
-    elif answer == 'N':
-      return False
-    print('>>> ERROR: Enter Y for Yes or N for No.')
-
-def show_database_menu():
-  menu = (
-    'Show passwords',
-    'Generate password',
-    'Update password',
-    'Delete password',
-    'Exit'
-  )
-  print(f'{" DATABASE MENU ":=^35}')
-  for count, option in enumerate(menu):
-    print(f'{count + 1:.<5}{option:.>30}')
-
-def read_database(key = False):
-  with open('passwords.txt', 'r') as file:
-    database = file.readlines()
-  print(f'{" PASSWORDS ":=^35}')
-  for id, line in enumerate(database):
-    line = line.replace('\n', '')
-    print(f'{id + 1:.<5}{" " + line:.>30}')
-  print()
-  if key is True:
-    return database
-  input('Press ENTER to continue...')
-
-def generate(all_characters, option, id = False, key = False):
-    clear_console()
-    password_length = get_password_length()
-    characters = set_valid_characters(all_characters, option)
-    password = generate_password(characters, password_length)
-    print(f'Password generated: {password}')
-    save = confirm('Do you want to save the password? [Y/N] ')
-    if save is True:
-      if key is True:
-        with open('passwords.txt', 'r') as file:
-          database = file.readlines()
-          database[id] = password + '\n'
-        with open('passwords.txt', 'w') as file:
-          for line in database:
-            file.write(line)
-      else:
-        with open('passwords.txt', 'a') as file:
-          file.write(password + '\n')
-        print('\nPassword was saved successfully.')
-    else:
-      print('\nPassword was not saved.')
-    input('Press ENTER to continue...')
-
-
-all_characters = (
-  'abcdefghijklmnopqrstuvwxyz',
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-  '._-@#*',
-  '0123456789'
-)
-
-while True:
-  clear_console()
-  show_database_menu()
-  option = input_int('\nYour choice: ')
-
-  if option == 1:
-    clear_console()
-    read_database()
-
-  elif option == 2:
-    option = get_password_option()
-    if option is False:
-      continue
-    generate(all_characters, option)
-    
-  elif option == 3:
-    clear_console()
-    database = read_database(True)
-    id = input_int('Enter the password ID (0 to go back): ')
-    if id == 0:
-      continue
-    id -= 1
-    option = get_password_option()
-    if option is False:
-      continue
-    generate(all_characters, option, id, True)    
-  
-  elif option == 4:
-    clear_console()
-    database = read_database(True)
-    delete = input_int('Enter the password ID (0 to go back): ')
-    if delete == 0:
-      continue
-    delete -= 1
-    database.pop(delete)
-    with open('passwords.txt', 'w') as file:
-      for line in database:
-        file.write(line)
-
-  elif option == 5:
-    clear_console()
-    break
-
-  else:
-    print('>>> ERROR: Enter a valid option', end = '')
-    for c in range(3):
-      print('.', end = '', flush = True)
-      sleep(1)
-
-print('Program was finished.')
